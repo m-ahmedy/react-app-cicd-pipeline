@@ -2,15 +2,25 @@
 version: 2.1
 
 jobs:
-  hello:
+  build:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:16.15.1
     steps:
+      - checkout
       - run:
-          name: Echo Hello World
-          command: echo "Hello World"
+          name: Install Node Dependencies
+          command: |
+            npm install
+      - run:
+          name: Build the App
+          command: |
+            npm run build
+      - run:
+          name: Verify Build static files exist
+          command: |
+            ls -al build
 
 workflows:
   main:
     jobs:
-      - hello
+      - build
