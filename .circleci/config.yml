@@ -42,10 +42,29 @@ jobs:
           command: |
             npm run test
 
+  scan:
+    docker:
+      - image: cimg/node:16.15.1
+    steps:
+      - checkout
+      - restore_cache:
+          key: node-deps-{{ checksum "package.json" }}
+      - run:
+          name: Install Node Dependencies
+          command: |
+            npm install
+      - run:
+          name: Scan the App for critical vulnerabilities
+          command: |
+            npm audit --audit-level=critical
+
 workflows:
   main:
     jobs:
       - build
       - test:
+          requires:
+            - build
+      - scan:
           requires:
             - build
