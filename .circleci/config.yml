@@ -73,6 +73,15 @@ jobs:
           command: |
             aws s3 sync build s3://$S3_BUCKET_NAME --delete
 
+  verify:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: Verify access to website endpoint
+          command: |
+            curl http://$S3_BUCKET_NAME.s3-website-$AWS_DEFAULT_REGION.amazonaws.com
+
 workflows:
   main:
     jobs:
@@ -87,3 +96,6 @@ workflows:
           requires:
             - test
             - scan
+      - verify:
+          requires:
+            - deploy
