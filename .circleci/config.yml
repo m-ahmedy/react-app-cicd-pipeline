@@ -26,7 +26,24 @@ jobs:
             - node_modules
           key: node-deps-{{ checksum "package.json" }}
 
+  test:
+    docker:
+      - image: cimg/node:16.15.1
+    steps:
+      - checkout
+      - restore_cache:
+          key: node-deps-{{ checksum "package.json" }}
+      - run:
+          name: Install Node Dependencies
+          command: |
+            npm install
+      - run:
+          name: Test the App
+          command: |
+            npm run test
+
 workflows:
   main:
     jobs:
       - build
+      - test
